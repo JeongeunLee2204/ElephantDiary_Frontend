@@ -9,9 +9,9 @@ interface UserInfo {
 
 const MyPage = () => {
   const [user, setUser] = useState<UserInfo | null>(null);
-  console.log("API_BASE_URL:", import.meta.env.VITE_API_BASE_URL);
+  //console.log("API_BASE_URL:", import.meta.env.VITE_API_BASE_URL);
   useEffect(() => {
-    console.log("API_BASE_URL:", import.meta.env.VITE_API_BASE_URL);
+    //console.log("API_BASE_URL:", import.meta.env.VITE_API_BASE_URL);
     axios
       .get(`${import.meta.env.VITE_API_BASE_URL}/api/user/me`, {
         withCredentials: true,
