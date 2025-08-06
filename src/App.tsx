@@ -5,10 +5,12 @@ import Login from "./pages/Login";
 import MyPage from "./pages/MyPage";
 import Write from "./pages/Write";
 import List from "./pages/List";
+import Navbar from "./components/navbar";
 
 function App() {
   return (
     <>
+      <Navbar></Navbar>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
