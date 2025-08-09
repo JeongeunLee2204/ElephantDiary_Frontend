@@ -6,6 +6,7 @@
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "types": ["react", "react-dom"], // JSX 타입 인식
 
     /* Bundler mode */
     "moduleResolution": "bundler",

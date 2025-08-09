@@ -14,11 +14,9 @@ function Home() {
 
   return (
     <div>
-      안녕하세요!
+      코끼리 일기장에 오신 걸 환영합니다!
       <br />
-      <Button label="로그인" onClick={login}></Button>
-      <br />
-      <Button label="회원가입" onClick={register}></Button>
+      <Button label="시작하기" onClick={login}></Button>
     </div>
   );
 }
