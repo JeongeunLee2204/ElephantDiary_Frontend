@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Button from "../components/button";
 import axios from "axios";
+import Navbar from "../components/navbar";
 
 function Write() {
   const [title, setTitle] = useState("");
@@ -31,6 +32,7 @@ function Write() {
 
   return (
     <div>
+      <Navbar />
       <h2>일기 쓰기</h2>
       <div>
         <label>제목:</label>

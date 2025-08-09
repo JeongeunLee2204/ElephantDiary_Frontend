@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ListBlock from "../components/listBlock";
-
+import Navbar from "../components/navbar";
 interface Diary {
   id: number;
   title: string;
@@ -48,6 +48,7 @@ function List() {
 
   return (
     <div>
+      <Navbar />
       <h2>{user ? `${user.name}님의 일기 목록` : "로그인 필요"}</h2>
       {diaries.length > 0 ? (
         diaries.map((diary) => (

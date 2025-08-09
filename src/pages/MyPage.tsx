@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import Navbar from "../components/navbar";
 interface UserInfo {
   name: string;
   email: string;
@@ -37,6 +37,7 @@ const MyPage = () => {
 
   return (
     <div>
+      <Navbar />
       <h2>마이페이지</h2>
       <p>닉네임: {user.name}</p>
       <p>이메일: {user.email}</p>
