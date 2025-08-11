@@ -8,11 +8,11 @@ import Login from "./pages/Login";
 import MyPage from "./pages/MyPage";
 import Write from "./pages/Write";
 import List from "./pages/List";
-import Navbar from "./components/navbar";
 import PrivateRoute from "./components/privateRoute";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     axios
@@ -20,44 +20,47 @@ function App() {
         withCredentials: true,
       })
       .then(() => setIsAuthenticated(true))
-      .catch(() => setIsAuthenticated(false));
+      .catch(() => setIsAuthenticated(false))
+      .finally(() => setLoading(false));
   }, []);
 
-  return (
-    <>
-      <Routes>
-        {/* 공개 페이지 */}
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-        {/* 보호 페이지 */}
-        <Route
-          path="/mypage"
-          element={
-            <PrivateRoute isAuthenticated={isAuthenticated}>
-              <MyPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/write"
-          element={
-            <PrivateRoute isAuthenticated={isAuthenticated}>
-              <Write />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/list"
-          element={
-            <PrivateRoute isAuthenticated={isAuthenticated}>
-              <List />
-            </PrivateRoute>
-          }
-        />
-      </Routes>
-    </>
+  return (
+    <Routes>
+      {/* 공개 페이지 */}
+      <Route path="/" element={<Home />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
+
+      {/* 보호 페이지 */}
+      <Route
+        path="/mypage"
+        element={
+          <PrivateRoute isAuthenticated={isAuthenticated}>
+            <MyPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/write"
+        element={
+          <PrivateRoute isAuthenticated={isAuthenticated}>
+            <Write />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/list"
+        element={
+          <PrivateRoute isAuthenticated={isAuthenticated}>
+            <List />
+          </PrivateRoute>
+        }
+      />
+    </Routes>
   );
 }
 

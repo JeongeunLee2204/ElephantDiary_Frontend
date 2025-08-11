@@ -8,10 +8,6 @@ function Home() {
     navigate("/login");
   };
 
-  const register = (): void => {
-    navigate("/register");
-  };
-
   return (
     <div>
       코끼리 일기장에 오신 걸 환영합니다!

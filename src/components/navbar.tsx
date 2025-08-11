@@ -11,16 +11,7 @@ const Navbar: React.FC = () => {
   const toList = () => navigate("/list");
 
   const handleLogout = () => {
-    axios
-      .post(
-        `${import.meta.env.VITE_API_BASE_URL}/logout`,
-        {},
-        { withCredentials: true }
-      )
-      .then(() => {
-        window.location.href = "/";
-      })
-      .catch((err) => console.error("로그아웃 실패", err));
+    window.location.assign(`${import.meta.env.VITE_API_BASE_URL}/logout`);
   };
 
   return (
