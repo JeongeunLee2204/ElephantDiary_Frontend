@@ -27,7 +27,7 @@ function Write() {
         { withCredentials: true }
       )
       .then(() => {
-        alert("저장 완료");
+        //alert("저장 완료");
         window.location.href = "/mypage";
       })
       .catch((err) => console.error("일기 저장 실패", err));
