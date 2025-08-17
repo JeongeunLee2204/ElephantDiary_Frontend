@@ -1,7 +1,6 @@
 import React from "react";
 import Button from "./button";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();

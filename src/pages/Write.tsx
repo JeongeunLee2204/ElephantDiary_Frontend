@@ -6,15 +6,23 @@ import Navbar from "../components/navbar";
 function Write() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [score, setScore] = useState(""); // 문자열로 관리 후 전송 시 숫자 변환
 
   const postDiary = () => {
+    const scoreNum = score === "" ? null : Number(score);
+    if (score !== "" && Number.isNaN(scoreNum)) {
+      alert("점수는 숫자로 입력해 주세요");
+      return;
+    }
+
     axios
       .post(
         `${import.meta.env.VITE_API_BASE_URL}/api/diary`,
         {
-          title: title,
-          content: content,
-          date: new Date().toISOString().slice(0, 10), // LocalDate 형식
+          title,
+          content,
+          score: scoreNum,
+          date: new Date().toISOString().slice(0, 10),
         },
         { withCredentials: true }
       )
@@ -28,12 +36,14 @@ function Write() {
   const reset = () => {
     setTitle("");
     setContent("");
+    setScore("");
   };
 
   return (
     <div>
       <Navbar />
       <h2>일기 쓰기</h2>
+
       <div>
         <label>제목:</label>
         <input
@@ -41,7 +51,7 @@ function Write() {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="제목을 입력하세요"
-          style={{ width: "300px", marginBottom: "10px" }}
+          style={{ width: 300, marginBottom: 10 }}
         />
       </div>
 
@@ -57,7 +67,18 @@ function Write() {
         />
       </div>
 
-      <div style={{ marginTop: "10px" }}>
+      <div>
+        <label>점수:</label>
+        <input
+          type="number"
+          value={score}
+          onChange={(e) => setScore(e.target.value)}
+          placeholder="점수를 입력하세요"
+          style={{ width: 300, marginBottom: 10 }}
+        />
+      </div>
+
+      <div style={{ marginTop: 10 }}>
         <Button label="저장" onClick={postDiary} />
         <Button label="초기화" onClick={reset} />
       </div>

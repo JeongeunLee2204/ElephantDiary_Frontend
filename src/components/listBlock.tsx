@@ -4,6 +4,7 @@ interface ListBlockProps {
   title: string;
   summary: string;
   date: Date;
+  score: string;
   onClick: () => void;
 }
 
@@ -11,6 +12,7 @@ const ListBlock: React.FC<ListBlockProps> = ({
   title,
   summary,
   date,
+  score,
   onClick,
 }) => {
   return (
@@ -37,6 +39,7 @@ const ListBlock: React.FC<ListBlockProps> = ({
       >
         {title}
       </div>
+      <div style={{ color: "#555", marginBottom: "8px" }}>{score}</div>
       <div style={{ color: "#555", marginBottom: "8px" }}>{summary}</div>
       <div style={{ fontSize: "12px", color: "#888" }}>
         {date.toLocaleDateString()}

@@ -7,6 +7,7 @@ interface Diary {
   title: string;
   summary: string;
   date: string;
+  score: string;
 }
 
 interface User {
@@ -57,6 +58,7 @@ function List() {
             title={diary.title}
             summary={diary.summary}
             date={new Date(diary.date)}
+            score={diary.score}
             onClick={() => {
               console.log(`${diary.id}번 일기 클릭됨`);
             }}
