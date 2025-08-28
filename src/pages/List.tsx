@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import ListBlock from "../components/listBlock";
 import Navbar from "../components/navbar";
+import { useNavigate } from "react-router-dom";
 
 interface Diary {
   id: number;
@@ -20,6 +21,7 @@ interface User {
 function List() {
   const [diaries, setDiaries] = useState<Diary[]>([]);
   const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -48,6 +50,22 @@ function List() {
       });
   }, [user]);
 
+  const handleDelete = async (id: number) => {
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_BASE_URL}/api/diary/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
+      setDiaries((prev) => prev.filter((d) => d.id !== id));
+    } catch (err) {
+      console.error("삭제 실패:", err);
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-blue-50 text-gray-800">
       <Navbar />
@@ -65,9 +83,9 @@ function List() {
                 summary={diary.summary}
                 date={new Date(diary.date)}
                 score={diary.score}
-                onClick={() => {
-                  console.log(`${diary.id}번 일기 클릭됨`);
-                }}
+                onClick={() => navigate(`/diary/${diary.id}`)}
+                update={() => navigate(`/diary/${diary.id}/edit`)}
+                delete={() => handleDelete(diary.id)}
               />
             ))}
           </div>
