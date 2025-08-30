@@ -70,7 +70,7 @@ function List() {
     <div className="min-h-screen bg-blue-50 text-gray-800">
       <Navbar />
       <div className="max-w-3xl mx-auto p-6">
-        <h2 className="text-2xl font-bold mb-6 text-blue-600">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-blue-600 text-center">
           {user ? `${user.name}님의 일기 목록` : "로그인이 필요합니다"}
         </h2>
 
@@ -90,9 +90,11 @@ function List() {
             ))}
           </div>
         ) : (
-          <p className="text-gray-500 text-center bg-white rounded-lg shadow p-6">
-            아직 작성한 일기가 없습니다.
-          </p>
+          <div className="bg-white rounded-2xl shadow p-10 text-center">
+            <p className="text-gray-500 text-lg">
+              아직 작성한 일기가 없습니다.
+            </p>
+          </div>
         )}
       </div>
     </div>
