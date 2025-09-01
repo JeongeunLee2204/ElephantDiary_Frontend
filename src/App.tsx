@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 import Home from "./pages/Home";
-import Register from "./pages/Register";
 import Login from "./pages/Login";
 import MyPage from "./pages/MyPage";
 import Write from "./pages/Write";
 import List from "./pages/List";
 import PrivateRoute from "./components/privateRoute";
+import Edit from "./pages/Edit";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -32,9 +32,7 @@ function App() {
     <Routes>
       {/* 공개 페이지 */}
       <Route path="/" element={<Home />} />
-      <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
-
       {/* 보호 페이지 */}
       <Route
         path="/mypage"
@@ -60,6 +58,8 @@ function App() {
           </PrivateRoute>
         }
       />
+      {/*수정 경로*/}
+      <Route path="/diary/:id/edit" element={<Edit />} />
     </Routes>
   );
 }

@@ -7,6 +7,7 @@ interface DiaryDetail {
   id: number;
   title: string;
   summary: string;
+  content: string;
   date: string;
   score: string;
 }
