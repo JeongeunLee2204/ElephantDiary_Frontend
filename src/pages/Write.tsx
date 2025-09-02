@@ -26,7 +26,9 @@ function Write() {
         },
         { withCredentials: true }
       )
-      .then(() => {
+      .then((res) => {
+        // ✅ 응답 summary 확인
+        console.log("서버 응답 summary:", res.data.summary);
         window.location.href = "/mypage";
       })
       .catch((err) => console.error("일기 저장 실패", err));

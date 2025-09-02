@@ -39,9 +39,10 @@ const ListBlock: React.FC<ListBlockProps> = (props) => {
       >
         {title}
       </div>
-
+      <div style={{ color: "#555", marginBottom: "8px" }}>
+        {summary || "요약 없음"}
+      </div>
       <div style={{ color: "#555", marginBottom: "6px" }}>{score}점</div>
-      <div style={{ color: "#555", marginBottom: "8px" }}>{summary}</div>
 
       <div style={{ fontSize: "12px", color: "#888" }}>
         {date.toLocaleDateString()}

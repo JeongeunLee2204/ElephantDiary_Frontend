@@ -39,7 +39,8 @@ function List() {
   useEffect(() => {
     if (!user) return;
     axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/diary/${user.userId}`, {
+      // ✅ 경로 수정: /api/diary/{userId} → /api/diary
+      .get(`${import.meta.env.VITE_API_BASE_URL}/api/diary`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -76,18 +77,22 @@ function List() {
 
         {diaries.length > 0 ? (
           <div className="space-y-4">
-            {diaries.map((diary) => (
-              <ListBlock
-                key={diary.id}
-                title={diary.title}
-                summary={diary.summary}
-                date={new Date(diary.date)}
-                score={diary.score}
-                onClick={() => navigate(`/diary/${diary.id}`)}
-                update={() => navigate(`/diary/${diary.id}/edit`)}
-                delete={() => handleDelete(diary.id)}
-              />
-            ))}
+            {diaries.map((diary) => {
+              console.log("title 확인:", diary.title);
+              console.log("summary 확인:", diary.summary);
+              return (
+                <ListBlock
+                  key={diary.id}
+                  title={diary.title}
+                  summary={diary.summary}
+                  date={new Date(diary.date)}
+                  score={diary.score}
+                  onClick={() => navigate(`/diary/${diary.id}`)}
+                  update={() => navigate(`/diary/${diary.id}/edit`)}
+                  delete={() => handleDelete(diary.id)}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="bg-white rounded-2xl shadow p-10 text-center">
