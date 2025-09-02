@@ -6,7 +6,6 @@ import { useNavigate, useParams } from "react-router-dom";
 interface DiaryDetail {
   id: number;
   title: string;
-  summary: string;
   content: string;
   date: string;
   score: string;
@@ -47,7 +46,7 @@ function Edit() {
         `${import.meta.env.VITE_API_BASE_URL}/api/diary/${id}`,
         {
           title: form.title,
-          summary: form.summary,
+          content: form.content,
           date: form.date,
           score: form.score,
         },
@@ -92,13 +91,13 @@ function Edit() {
 
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            요약
+            본문
           </label>
           <textarea
-            name="summary"
-            value={form.summary}
+            name="content"
+            value={form.content}
             onChange={onChange}
-            className="w-full border rounded-md px-3 py-2 h-28 resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="w-full border rounded-md px-3 py-2 h-40 resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
 
