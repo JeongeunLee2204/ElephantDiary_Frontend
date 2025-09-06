@@ -5,11 +5,15 @@ import { useNavigate, useParams } from "react-router-dom";
 
 interface DiaryDetail {
   id: number;
-  title: string;
-  content: string;
-  date: string;
-  score: string;
+  title: string | null;
+  content: string | null;
+  date: string | null; // ISO 'YYYY-MM-DD'
+  score: number | null; // 숫자로 관리
 }
+
+// 빈 문자열을 null로 치환
+const nilIfEmpty = (v: string | null | undefined) =>
+  v === "" || v === undefined ? null : v;
 
 function Edit() {
   const { id } = useParams<{ id: string }>();
@@ -22,15 +26,36 @@ function Edit() {
       .get(`${import.meta.env.VITE_API_BASE_URL}/api/diary/${id}`, {
         withCredentials: true,
       })
-      .then((res) => setForm(res.data))
+      .then((res) => {
+        const d = res.data as DiaryDetail;
+
+        // 서버에서 null이 올 수 있으니, 화면용으로 안전하게 정규화
+        setForm({
+          ...d,
+          title: d.title ?? "",
+          content: d.content ?? "",
+          date: d.date ?? "",
+          // score는 number|null로 보관. 문자열로 왔으면 숫자로 바꿈
+          score:
+            typeof (d as any).score === "string"
+              ? Number.isNaN(Number((d as any).score))
+                ? null
+                : Number((d as any).score)
+              : (d as any).score ?? null,
+        });
+      })
       .catch((err) => {
         console.error("상세 조회 실패:", err);
-        alert("일기를 불러올 수 없습니다.");
+        const msg =
+          err?.response?.data?.message ||
+          err?.message ||
+          "일기를 불러올 수 없습니다.";
+        alert(msg);
         navigate("/mypage");
       });
   }, [id, navigate]);
 
-  const onChange = (
+  const onChangeText = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     if (!form) return;
@@ -38,25 +63,47 @@ function Edit() {
     setForm({ ...form, [name]: value });
   };
 
+  const onChangeScore = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!form) return;
+    const raw = e.target.value;
+    // 빈 칸이면 null, 아니면 숫자. 숫자 아니면 무시(또는 null)
+    if (raw === "") {
+      setForm({ ...form, score: null });
+    } else {
+      const num = Number(raw);
+      setForm({ ...form, score: Number.isNaN(num) ? null : num });
+    }
+  };
+
   const onSave = async () => {
     if (!form || saving) return;
     setSaving(true);
     try {
+      // 전송 전에 빈 문자열은 null로 치환, score는 number|null 유지
+      const payload = {
+        title: nilIfEmpty(form.title as any),
+        content: nilIfEmpty(form.content as any),
+        date: nilIfEmpty(form.date as any), // 'YYYY-MM-DD'
+        score: form.score, // number|null
+      };
+
       await axios.put(
         `${import.meta.env.VITE_API_BASE_URL}/api/diary/${id}`,
+        payload,
         {
-          title: form.title,
-          content: form.content,
-          date: form.date,
-          score: form.score,
-        },
-        { withCredentials: true }
+          withCredentials: true,
+          headers: { "Content-Type": "application/json" },
+        }
       );
       alert("수정 완료");
       navigate("/mypage");
-    } catch (err) {
+    } catch (err: any) {
       console.error("수정 실패:", err);
-      alert("수정 중 오류가 발생했습니다.");
+      const msg =
+        err?.response?.data?.message ||
+        err?.message ||
+        "수정 중 오류가 발생했습니다.";
+      alert(msg);
     } finally {
       setSaving(false);
     }
@@ -83,8 +130,8 @@ function Edit() {
           </label>
           <input
             name="title"
-            value={form.title}
-            onChange={onChange}
+            value={form.title ?? ""} // null 방지
+            onChange={onChangeText}
             className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
@@ -95,8 +142,8 @@ function Edit() {
           </label>
           <textarea
             name="content"
-            value={form.content}
-            onChange={onChange}
+            value={form.content ?? ""} // null 방지
+            onChange={onChangeText}
             className="w-full border rounded-md px-3 py-2 h-40 resize-y focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
         </div>
@@ -107,9 +154,10 @@ function Edit() {
               날짜
             </label>
             <input
+              type="date" // 날짜 입력 보조
               name="date"
-              value={form.date}
-              onChange={onChange}
+              value={form.date ?? ""} // 'YYYY-MM-DD'
+              onChange={onChangeText}
               className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="YYYY-MM-DD"
             />
@@ -119,9 +167,10 @@ function Edit() {
               점수
             </label>
             <input
+              type="number" // 숫자 입력 보조
               name="score"
-              value={form.score}
-              onChange={onChange}
+              value={form.score ?? ""} // number|null -> ''로 표시
+              onChange={onChangeScore}
               className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
           </div>
