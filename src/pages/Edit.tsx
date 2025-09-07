@@ -16,7 +16,7 @@ interface DiaryDetail {
 const nilIfEmpty = (v: string | null | undefined) =>
   v === "" || v === undefined ? null : v;
 
-// 환경 변수(동일 도메인 배포면 비워둬도 됨)
+// 동일 도메인 배포면 비워둬도 됨
 const BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 function Edit() {
@@ -32,12 +32,11 @@ function Edit() {
       return;
     }
 
-    const url = `${BASE}/api/diary/${id}`;
+    const url = `${BASE}/api/diary/id/${id}`;
     axios
       .get(url, { withCredentials: true })
       .then((res) => {
         const d = res.data as DiaryDetail;
-
         // 화면 표시용 정규화 (null을 ''로)
         setForm({
           ...d,
@@ -100,7 +99,7 @@ function Edit() {
         score: form.score, // number|null
       };
 
-      await axios.put(`${BASE}/api/diary/${id}`, payload, {
+      await axios.put(`${BASE}/api/diary/id/${id}`, payload, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
