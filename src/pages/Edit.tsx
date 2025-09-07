@@ -1,3 +1,4 @@
+// src/pages/Edit.tsx
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../components/navbar";
@@ -15,6 +16,9 @@ interface DiaryDetail {
 const nilIfEmpty = (v: string | null | undefined) =>
   v === "" || v === undefined ? null : v;
 
+// 환경 변수(동일 도메인 배포면 비워둬도 됨)
+const BASE = import.meta.env.VITE_API_BASE_URL || "";
+
 function Edit() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -22,20 +26,24 @@ function Edit() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    if (!id) {
+      alert("잘못된 접근입니다.");
+      navigate("/list");
+      return;
+    }
+
+    const url = `${BASE}/api/diary/${id}`;
     axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/diary/${id}`, {
-        withCredentials: true,
-      })
+      .get(url, { withCredentials: true })
       .then((res) => {
         const d = res.data as DiaryDetail;
 
-        // 서버에서 null이 올 수 있으니, 화면용으로 안전하게 정규화
+        // 화면 표시용 정규화 (null을 ''로)
         setForm({
           ...d,
           title: d.title ?? "",
           content: d.content ?? "",
           date: d.date ?? "",
-          // score는 number|null로 보관. 문자열로 왔으면 숫자로 바꿈
           score:
             typeof (d as any).score === "string"
               ? Number.isNaN(Number((d as any).score))
@@ -45,13 +53,20 @@ function Edit() {
         });
       })
       .catch((err) => {
-        console.error("상세 조회 실패:", err);
+        const status = err?.response?.status;
         const msg =
           err?.response?.data?.message ||
           err?.message ||
           "일기를 불러올 수 없습니다.";
-        alert(msg);
-        navigate("/mypage");
+        console.error("상세 조회 실패:", { status, msg, url });
+        alert(
+          status === 404
+            ? "해당 일기를 찾을 수 없습니다."
+            : status === 403
+            ? "이 일기에 접근할 권한이 없습니다."
+            : `일기를 불러올 수 없습니다. (status=${status ?? "N/A"})`
+        );
+        navigate("/list"); // 실패 시 /list 이동
       });
   }, [id, navigate]);
 
@@ -66,7 +81,6 @@ function Edit() {
   const onChangeScore = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!form) return;
     const raw = e.target.value;
-    // 빈 칸이면 null, 아니면 숫자. 숫자 아니면 무시(또는 null)
     if (raw === "") {
       setForm({ ...form, score: null });
     } else {
@@ -79,7 +93,6 @@ function Edit() {
     if (!form || saving) return;
     setSaving(true);
     try {
-      // 전송 전에 빈 문자열은 null로 치환, score는 number|null 유지
       const payload = {
         title: nilIfEmpty(form.title as any),
         content: nilIfEmpty(form.content as any),
@@ -87,23 +100,28 @@ function Edit() {
         score: form.score, // number|null
       };
 
-      await axios.put(
-        `${import.meta.env.VITE_API_BASE_URL}/api/diary/${id}`,
-        payload,
-        {
-          withCredentials: true,
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      await axios.put(`${BASE}/api/diary/${id}`, payload, {
+        withCredentials: true,
+        headers: { "Content-Type": "application/json" },
+      });
+
       alert("수정 완료");
-      navigate("/mypage");
+      navigate("/list");
     } catch (err: any) {
-      console.error("수정 실패:", err);
+      const status = err?.response?.status;
       const msg =
         err?.response?.data?.message ||
         err?.message ||
         "수정 중 오류가 발생했습니다.";
-      alert(msg);
+      console.error("수정 실패:", { status, msg });
+      alert(
+        status === 404
+          ? "해당 일기를 찾을 수 없습니다."
+          : status === 403
+          ? "이 일기를 수정할 권한이 없습니다."
+          : `수정 중 오류가 발생했습니다. (status=${status ?? "N/A"})`
+      );
+      navigate("/list");
     } finally {
       setSaving(false);
     }
@@ -169,7 +187,7 @@ function Edit() {
             <input
               type="number" // 숫자 입력 보조
               name="score"
-              value={form.score ?? ""} // number|null -> ''로 표시
+              value={form.score ?? ""} // number|null -> '' 표시
               onChange={onChangeScore}
               className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
