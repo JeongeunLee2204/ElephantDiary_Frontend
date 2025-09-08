@@ -9,6 +9,7 @@ import Write from "./pages/Write";
 import List from "./pages/List";
 import PrivateRoute from "./components/privateRoute";
 import Edit from "./pages/Edit";
+import View from "./pages/View";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -24,15 +25,14 @@ function App() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
 
   return (
     <Routes>
       {/* 공개 페이지 */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
+
       {/* 보호 페이지 */}
       <Route
         path="/mypage"
@@ -58,8 +58,24 @@ function App() {
           </PrivateRoute>
         }
       />
-      {/*수정 경로*/}
-      <Route path="/diary/:id/edit" element={<Edit />} />
+
+      {/* 보기 / 수정 */}
+      <Route
+        path="/diary/:id"
+        element={
+          <PrivateRoute isAuthenticated={isAuthenticated}>
+            <View />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/diary/:id/edit"
+        element={
+          <PrivateRoute isAuthenticated={isAuthenticated}>
+            <Edit />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   );
 }
